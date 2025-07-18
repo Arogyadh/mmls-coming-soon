@@ -14,7 +14,7 @@
     <div class="page-container">
         <div class="content-wrapper">
             <header class="header">
-                <img src="/images/logo_transparentbackground.png" alt="Logo" class="logo">
+                <img src="/images/mmls_transparentbg.png" alt="Logo" class="logo">
             </header>
 
             <main class="main-content">
