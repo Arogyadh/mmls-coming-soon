@@ -36,9 +36,9 @@ class NotifyController extends Controller
 
             return redirect()->back()->with('success', 'Thank you! You will be notified.');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            if (isset($e->validator) && $e->validator->errors()->has('email')) {
-                $errors = $e->validator->errors();
-                if (in_array('The email has already been taken.', $errors->get('email'))) {
+            if ($e->validator->errors()->has('email')) {
+                $failedRules = $e->validator->failed();
+                if (isset($failedRules['email']['Unique'])) {
                     return redirect()->back()->with('error', 'You have already been subscribed.')->withInput();
                 }
             }

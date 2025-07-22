@@ -8,6 +8,35 @@
     <link rel="stylesheet" href="{{ asset('styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://www.google.com/recaptcha/api.js?render=6Lf2soMrAAAAADnZ_jJnI_TAX1h9BXf79hNHhQAA"></script>
+    <style>
+        /* Spinner styles */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff33;
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .submit-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 
 <body>
@@ -24,8 +53,8 @@
                             <h1 class="main-title">Coming soon.</h1>
                             <div class="text-section">
                                 <div class="text-wrapper">
-                                    <h2 class="subtitle">Full API access to the manufactured housing marketing</h2>
-                                    <p class="description">Sign up to be the first for News and Updates.</p>
+                                    <h2 class="subtitle">Full API access to the manufactured housing data and insights.</h2>
+                                    <p class="description">Sign up to for news, updates and early access.</p>
                                 </div>
                                 <form class="email-form" id="emailForm" method="POST" action="{{ route('notify') }}">
                                     @csrf
@@ -39,7 +68,8 @@
                                             required>
                                         <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
                                         <input type="hidden" name="website" id="website" value="">
-                                        <button type="submit" class="submit-button">
+                                        <button type="submit" class="submit-button" id="submitButton">
+                                            <div class="spinner" id="spinner"></div>
                                             <span class="button-text">Notify Me</span>
                                         </button>
                                     </div>
@@ -70,11 +100,26 @@
         grecaptcha.ready(function() {
             $('#emailForm').on('submit', function(e) {
                 e.preventDefault();
+                
+                // Show spinner and disable button
+                const submitButton = $('#submitButton');
+                const spinner = $('#spinner');
+                const buttonText = $('.button-text');
+                
+                submitButton.prop('disabled', true);
+                spinner.show();
+                buttonText.text('Submitting...');
+                
                 grecaptcha.execute('6Lf2soMrAAAAADnZ_jJnI_TAX1h9BXf79hNHhQAA', {
                     action: 'submit'
                 }).then(function(token) {
                     $('#g-recaptcha-response').val(token);
                     e.target.submit();
+                }).catch(function(error) {
+                    // Re-enable button if there's an error
+                    submitButton.prop('disabled', false);
+                    spinner.hide();
+                    buttonText.text('Notify Me');
                 });
             });
         });
